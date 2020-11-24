@@ -22,3 +22,6 @@ class QModel:
         model.add(Dense(outputs))
         model.compile(optimizer=keras.optimizers.Adam(lr=0.001), loss='mse', metrics=['accuracy'])
         return model
+
+    def clone(self):
+        return keras.models.clone_model(self.model)
