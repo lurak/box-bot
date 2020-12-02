@@ -1,23 +1,38 @@
 import gym
 import time
 import matplotlib.pyplot as plt
-
-def preprocess_image(observation):
-    rgb = observation[30:180, 30: 130]
-    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-    return gray
+from QAgent import QAgent
 
 env = gym.make('Boxing-v0')
 env.reset()
-# for _ in range(1000):
-#     # env.render()
-#     observation, reward, done, _ = env.step(env.action_space.sample()) # take a random action
+
+# Params
+gamma = 0.95
+action_number = 18
+minibatch = 48
+epsilon = 1
+episodes = 100
+begin_train = 50
+train_step = 1
+begin_copy = 100
+copy_step = 100
+epsilon_delta = epsilon / (episodes // 2)
+min_epsilon = 0.00
 #
-#     # plt.imshow()
-#     print(preprocess_image(observation).shape)
-#     plt.show()
-#     # print(reward)
-#     time.sleep(0.3)
-print(type(env))
+
+agent = QAgent(
+    gamma=gamma,
+    action_number=action_number,
+    minibatch=minibatch,
+    epsilon=epsilon,
+    episodes=episodes,
+    begin_train=begin_train,
+    train_step=train_step,
+    begin_copy=begin_copy,
+    copy_step=copy_step,
+    epsilon_delta=epsilon_delta,
+    min_epsilon=min_epsilon
+)
+
+agent.train(env)
 env.close()

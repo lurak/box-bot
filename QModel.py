@@ -5,6 +5,8 @@ from keras.layers import Convolution2D, MaxPool2D, Dense, Flatten
 class QModel:
     def __init__(self, input_shape, output_shape):
         self.model = self.build_model(input_shape, output_shape)
+        self.input_shape = input_shape
+        self.output_shape = output_shape
 
     def build_model(self, input_shape, outputs):
         model = keras.Sequential()
@@ -21,7 +23,13 @@ class QModel:
         model.add(Dense(128, activation='relu'))
         model.add(Dense(outputs))
         model.compile(optimizer=keras.optimizers.Adam(lr=0.001), loss='mse', metrics=['accuracy'])
+        # print(model.summary())
         return model
 
+    def save(self):
+        self.model.save('supermodel')
+
     def clone(self):
-        return keras.models.clone_model(self.model)
+        new_model = QModel(self.input_shape, self.output_shape)
+        new_model.model = keras.models.clone_model(self.model)
+        return new_model

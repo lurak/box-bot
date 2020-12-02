@@ -1,10 +1,10 @@
 import random
 import numpy as np
-
+from collections import deque
 
 class ReplayBuffer:
     def __init__(self):
-        self.history = []
+        self.history = deque(maxlen=2000)
 
     def push(self, action, state, reward, next_state, done):
         self.history.append((action, np.expand_dims(state, 0), reward,
