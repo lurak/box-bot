@@ -1,0 +1,17 @@
+{
+    "gamma": 0.95,
+    "action_number": 18,
+    "minibatch": 64,
+    "episode_steps": 500,
+    "episode_to_save": 1000,
+    "max_buffer_len": 20000,
+    "episodes": 130000,
+    "begin_train": 1000,
+    "copy_step": 500,
+    "epsilon_delta": 60000,
+    "epsilon_start": 1.0,
+    "epsilon_end": 0.01,
+    "load_model": true,
+    "path_to_load": "saved_models/ddqn_model2",
+    "path_to_save": "saved_models/ddqn_model3"
+}

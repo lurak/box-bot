@@ -1,0 +1,19 @@
+{
+    "gamma": 0.95,
+    "action_number": 18,
+    "minibatch": 48,
+    "episode_steps": 500,
+    "episode_to_save": 50,
+    "max_buffer_len": 20000,
+    "episodes": 100,
+    "begin_train": 500,
+    "train_step": 1,
+    "begin_copy": 100,
+    "copy_step": 100,
+    "epsilon_delta": 45,
+    "epsilon_start": 0.5,
+    "epsilon_end": 0.01,
+    "load_model": true,
+    "path_to_load": "saved_models/model",
+    "path_to_save": "saved_models/model1"
+}

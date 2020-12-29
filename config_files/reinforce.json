@@ -1,0 +1,10 @@
+{
+  "gamma": 0.97,
+  "action_number": 18,
+  "episodes": 1000,
+  "max_episode_step": 100,
+  "load_model": false,
+  "path_to_load": "saved_models/reinforce",
+  "path_to_save": "saved_models/reinforce",
+  "episode_to_save": 50
+}
