@@ -1,4 +1,3 @@
-from REINFORCE.model import BoxModel
 from GeneralModel.genetal_agent import GeneralAgent
 import gym
 import torch
@@ -14,7 +13,9 @@ class ReinforceAgent(GeneralAgent):
                  load_model,
                  path_to_load,
                  path_to_save,
+                 plot_to_save,
                  episode_to_save,
+                 model_type
                  ):
         super().__init__(gamma=gamma,
                          action_number=action_number,
@@ -23,7 +24,8 @@ class ReinforceAgent(GeneralAgent):
                          load_model=load_model,
                          episode_to_save=episode_to_save,
                          episodes=episodes,
-                         model=BoxModel(action_number)
+                         plots_to_save=plot_to_save,
+                         model_type=model_type
                          )
 
         self.numsteps = []

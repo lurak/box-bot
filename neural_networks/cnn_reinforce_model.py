@@ -4,9 +4,9 @@ import torch.nn.functional as F
 import numpy as np
 
 
-class BoxModel(nn.Module):
+class CnnReinforceModel(nn.Module):
     def __init__(self, num_actions):
-        super(BoxModel, self).__init__()
+        super(CnnReinforceModel, self).__init__()
         self.num_actions = num_actions
 
         self.layers = nn.Sequential(

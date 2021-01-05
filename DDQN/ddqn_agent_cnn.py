@@ -5,11 +5,14 @@ import numpy as np
 import gym
 import torch
 from time import sleep
-from DDQN.ddqn_model import DDQNModel
+from skimage.transform import resize
+from skimage.color import rgb2gray
+# from cart_pole_model import DDQNModel
 import matplotlib.pyplot as plt
+from GeneralModel.genetal_agent import GeneralAgent
 
 
-class DDQNAgent:
+class DDQNAgentCnn(GeneralAgent):
     def __init__(self,
                  gamma,
                  action_number,
@@ -23,11 +26,22 @@ class DDQNAgent:
                  load_model,
                  path_to_load,
                  path_to_save,
+                 plots_to_save,
                  episode_steps,
                  episode_to_save,
-                 max_buffer_len
+                 max_buffer_len,
+                 model_type
                  ):
 
+        super().__init__(gamma=gamma,
+                         action_number=action_number,
+                         path_to_load=path_to_load,
+                         path_to_save=path_to_save,
+                         plots_to_save=plots_to_save,
+                         load_model=load_model,
+                         episode_to_save=episode_to_save,
+                         episodes=episodes,
+                         model_type=model_type)
         # Epsilon
 
         self.epsilon_delta = epsilon_delta
@@ -38,23 +52,12 @@ class DDQNAgent:
         # Main Params
 
         self.minibatch = minibatch
-        self.action_number = action_number
-        self.gamma = gamma
 
         # Episode Params
 
         self.begin_train = begin_train
         self.copy_step = copy_step
-        self.episodes = episodes
         self.episode_steps = episode_steps
-        self.episode_to_save = episode_to_save
-
-        # I/O params
-
-        self.path_to_load = path_to_load
-        self.path_to_save = path_to_save
-        self.load_model = load_model
-        self.trangle = trange(self.episodes, desc='Training', leave=True)
 
         # Model Fields
 
@@ -63,11 +66,7 @@ class DDQNAgent:
         self.replay_buffer = ReplayBuffer(max_buffer_len)
 
         # Model
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.model = DDQNModel(action_number).to(self.device)
-        self.target_model = DDQNModel(action_number).to(self.device)
-        if self.load_model:
-            self.model.load_state_dict(torch.load(self.path_to_load))
+        self.target_model = model_type(action_number).to(self.device)
         self.update_target()
 
         # Rewards
@@ -93,11 +92,10 @@ class DDQNAgent:
         return self.action
 
     @staticmethod
-    def preprocess_observation(observation):
-        rgb = observation[30:180, 30: 130] / 255
-        r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-        gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-        return gray.reshape(1, 150, 100)
+    def preprocess_observation(obs):
+        img = resize(rgb2gray(obs[0:188, 23:136, :]), (28, 28), mode='constant')
+        img = img.reshape(1, 28, 28)
+        return img
 
     def transition_process(self, o_state, o_act, o_reward, o_next_state, o_done):
 
@@ -139,15 +137,15 @@ class DDQNAgent:
             torch.save(self.model.state_dict(), self.path_to_save)
             fig = plt.figure()
             plt.plot(self.rewards)
-            fig.savefig('plots/plt_reward2.png')
+            fig.savefig(self.plots_to_save + '_reward.png')
             plt.close(fig)
             fig = plt.figure()
             plt.plot(self.losses)
-            fig.savefig('plots/plt_loss2.png')
+            fig.savefig(self.plots_to_save + '_loss.png')
             plt.close(fig)
             fig = plt.figure()
             plt.plot(self.periodic_rewards)
-            fig.savefig('plots/plt_periodic_reward2.png')
+            fig.savefig(self.plots_to_save + '_periodic_reward.png')
             plt.close(fig)
             
     def train(self, env: gym.wrappers.time_limit.TimeLimit):
@@ -179,21 +177,6 @@ class DDQNAgent:
                 self.init_new_episode(env)
                 self.rewards.append(episode_reward)
                 episode_reward = 0
-
-    def play(self, env: gym.wrappers.time_limit.TimeLimit):
-        observation = env.reset()
-        total_reward = 0
-        while True:
-            state = self.preprocess_observation(observation)
-            state = torch.autograd.Variable(torch.FloatTensor(state).to(self.device).unsqueeze(0))
-            action = self.model(state).max(1)[1].item()
-            observation, reward, done, _ = env.step(action)
-            total_reward += reward
-            sleep(0.01)
-            env.render()
-            if done:
-                break
-        print(total_reward)
 
 
 

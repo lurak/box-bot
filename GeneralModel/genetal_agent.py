@@ -11,7 +11,8 @@ class GeneralAgent:
                  load_model,
                  path_to_load,
                  path_to_save,
-                 model,
+                 plots_to_save,
+                 model_type,
                  episode_to_save,
                  ):
 
@@ -27,6 +28,7 @@ class GeneralAgent:
         self.path_to_save = path_to_save
         self.load_model = load_model
         self.episode_to_save = episode_to_save
+        self.plots_to_save = plots_to_save
 
         # Metrics
 
@@ -34,7 +36,7 @@ class GeneralAgent:
 
         # Model
 
-        self.model = model
+        self.model = model_type(action_number).to(self.device)
         if self.load_model:
             self.model.load_state_dict(torch.load(self.path_to_load))
 

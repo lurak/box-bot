@@ -6,5 +6,6 @@
   "load_model": false,
   "path_to_load": "saved_models/reinforce",
   "path_to_save": "saved_models/reinforce",
+  "plot_to_save": "plots/reinforce",
   "episode_to_save": 50
 }
